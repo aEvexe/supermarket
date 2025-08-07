@@ -1,61 +1,47 @@
-import {
-  IsString,
-  IsEmail,
-  Length,
-  IsOptional,
-  IsBoolean,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+// src/dto/customer.dto.ts
+import { ApiProperty, PartialType } from "@nestjs/swagger";
+import { IsString, IsEmail, IsOptional, IsBoolean } from "class-validator";
 
 export class CreateCustomerDto {
-  @ApiProperty({
-    example: 'John Doe',
-    description: 'Full name of the customer',
-  })
+  @ApiProperty()
   @IsString()
-  @Length(1, 100)
   full_name: string;
 
-  @ApiProperty({
-    example: '+998901234567',
-    description: 'Phone number of the customer',
-  })
+  @ApiProperty()
   @IsString()
-  @Length(7, 20)
   phone: string;
 
-  @ApiProperty({
-    example: 'customer@example.com',
-    description: 'Email of the customer',
-  })
+  @ApiProperty()
   @IsEmail()
-  @Length(1, 100)
   email: string;
 
-  @ApiProperty({
-    example: 'SecurePassword456',
-    description: 'Customer password',
-  })
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
-  @Length(6, 100)
-  password: string;
+  password?: string;
 
-  activation_link?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  hashedRefreshToken?: string;
 
-  @ApiProperty({
-    example: true,
-    required: false,
-    description: 'Account active status',
-  })
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  refresh_token?: string;
+
+  @ApiProperty({ default: false })
   @IsOptional()
   @IsBoolean()
   is_active?: boolean;
 
-  @ApiProperty({
-    example: '123 Main St, Tashkent',
-    description: 'Customer address',
-  })
+  @ApiProperty()
   @IsString()
-  @Length(1, 200)
   address: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  activation_link?: string;
 }
+

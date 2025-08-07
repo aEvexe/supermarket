@@ -1,15 +1,14 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+// src/dto/manager.dto.ts
+import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
+import { IsString, IsEmail, IsOptional, IsBoolean } from "class-validator";
 
 export class CreateManagerDto {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   name: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   phone: string;
 
   @ApiProperty()
@@ -18,6 +17,21 @@ export class CreateManagerDto {
 
   @ApiProperty()
   @IsString()
-  @MinLength(6)
   password: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  hashedRefreshToken?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  refresh_token?: string;
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  @IsOptional()
+  is_approved?: boolean;
 }
+

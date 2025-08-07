@@ -4,9 +4,15 @@ import { ConfigService } from '@nestjs/config';
 import cookieParser from "cookie-parser";
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { winstonConfig } from './logging/winston.logging';
+import { WinstonModule } from "nest-winston";
+import { AllExceptionsFilter } from './common/errors/error.handling';
 
 async function strap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(winstonConfig)
+  });
+  app.useGlobalFilters(new AllExceptionsFilter())
   const config = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());

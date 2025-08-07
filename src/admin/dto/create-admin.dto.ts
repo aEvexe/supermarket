@@ -1,33 +1,31 @@
-import { IsEmail, IsString, Length, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsEmail, IsOptional, IsBoolean } from "class-validator";
 
 export class CreateAdminDto {
-  @ApiProperty({ example: 'Ahmad Ali', description: 'Full name of the admin' })
+  @ApiProperty()
   @IsString()
-  @Length(1, 100)
   name: string;
 
-  @ApiProperty({
-    example: 'admin@example.com',
-    description: 'Email of the admin',
-  })
+  @ApiProperty()
   @IsEmail()
-  @Length(1, 100)
   email: string;
 
-  @ApiProperty({
-    example: 'StrongPassword123',
-    description: 'Password for the admin account',
-  })
+  @ApiProperty()
   @IsString()
-  @Length(6, 100)
   password: string;
 
-  @ApiProperty({
-    example: true,
-    description: 'Whether the admin is the creator',
-    default: false,
-  })
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  hashedRefreshToken?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  refresh_token?: string;
+
+  @ApiProperty({ default: false })
   @IsBoolean()
-  is_creator: boolean;
+  @IsOptional()
+  is_creator?: boolean;
 }

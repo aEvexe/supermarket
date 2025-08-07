@@ -2,61 +2,67 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
-  Param,
   Delete,
-} from '@nestjs/common';
-import { CustomersService } from './customers.service';
-import { CreateCustomerDto } from './dto/create-customer.dto';
-import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+  Param,
+  Body,
+  UseGuards,
+} from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { CreateCustomerDto } from "./dto/create-customer.dto";
+import { UpdateCustomerDto } from "./dto/update-customer.dto";
+import { CustomersService } from "./customers.service";
+import { UpdatePaymentDto } from "../payment/dto/update-payment.dto";
+import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/roles.decorator";
 
-@ApiTags('Customer')
-@Controller('customers')
-export class CustomersController {
+@ApiTags("Customers")
+@Controller("customers")
+export class CustomerController {
   constructor(private readonly customersService: CustomersService) {}
-
-  @Post()
-  @ApiOperation({ summary: 'Create new customer' })
-  @ApiResponse({ status: 201, description: 'Customer created successfully' })
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customersService.create(createCustomerDto);
-  }
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin")
   @Get()
-  @ApiOperation({ summary: 'Get all customers' })
-  @ApiResponse({ status: 200, description: 'List of customers returned' })
+  @ApiOperation({ summary: "Get all customers" })
+  @ApiResponse({ status: 200, description: "List of customers." })
   findAll() {
     return this.customersService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get customer by ID' })
-  @ApiResponse({ status: 200, description: 'Customer returned' })
-  findOne(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin")
+  @Get(":id")
+  @ApiOperation({ summary: "Get customer by ID" })
+  @ApiResponse({ status: 200, description: "Customer found." })
+  findOne(@Param("id") id: string) {
     return this.customersService.findOne(+id);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update customer by ID' })
-  @ApiResponse({ status: 200, description: 'Customer updated' })
-  update(
-    @Param('id') id: string,
-    @Body() updateCustomerDto: UpdateCustomerDto,
-  ) {
-    return this.customersService.update(+id, updateCustomerDto);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin")
+  @Post()
+  @ApiOperation({ summary: "Create customer" })
+  @ApiResponse({ status: 201, description: "Customer created." })
+  create(@Body() createDto: CreateCustomerDto) {
+    return this.customersService.create(createDto);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete customer by ID' })
-  @ApiResponse({ status: 200, description: 'Customer deleted' })
-  remove(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin")
+  @Patch(":id")
+  @ApiOperation({ summary: "Update customer" })
+  @ApiResponse({ status: 200, description: "Customer updated." })
+  update(@Param("id") id: string, @Body() updateDto: UpdateCustomerDto) {
+    return this.customersService.update(+id, updateDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin")
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete customer" })
+  @ApiResponse({ status: 200, description: "Customer deleted." })
+  remove(@Param("id") id: string) {
     return this.customersService.remove(+id);
-  }
-
-  @Get('activate/:link')
-  activateUser(@Param('link') link: string) {
-    return this.customersService.activateUser(link);
   }
 }

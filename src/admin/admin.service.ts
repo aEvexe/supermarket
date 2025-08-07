@@ -14,7 +14,6 @@ export class AdminService {
         name: createAdminDto.name,
         email: createAdminDto.email,
         hashedPassword: await bcrypt.hash(createAdminDto.password, 10), // <-- hash here
-        is_creator: createAdminDto.is_creator ?? false,
       },
     });
   }

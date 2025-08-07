@@ -31,6 +31,7 @@ export class ManagerAuthService {
     const payload = {
       id: user.id,
       email: user.email,
+      role: "manager"
     };
 
     const [accessToken, refreshToken] = await Promise.all([

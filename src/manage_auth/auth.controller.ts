@@ -17,41 +17,40 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateManagerDto } from '../manager/dto/create-manager.dto';
 import { SigninManagerDto } from '../manager/dto/signin-manager.dto';
 
-@Controller('manager-auth')
+@Controller("manager-auth")
 export class AuthController {
   constructor(
     private readonly authService: ManagerAuthService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
-  @Post('register')
+  @Post("register")
   async singup(@Body() createManagerDto: CreateManagerDto) {
     return this.authService.signup(createManagerDto);
   }
 
-  @Post('singin')
+  @Post("singin")
   async singin(
     @Body() SigninManagerDto: SigninManagerDto,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: Response
   ) {
     return this.authService.signin(SigninManagerDto, res);
   }
 
-  @Post('signout')
+  @Post(":id/signout")
   signout(
-    @CookieGetter('refreshToken') refreshToken: string,
-    @Res({ passthrough: true }) res: Response,
+    @Param("id", ParseIntPipe) id: number,
+    @CookieGetter("refreshToken") refreshToken: string,
+    @Res({ passthrough: true }) res: Response
   ) {
-    const decoded: any = this.jwtService.decode(refreshToken);
-    if (!decoded?.id) throw new UnauthorizedException();
-    return this.authService.signout(decoded.id, res);
+    return this.authService.signout(id, res);
   }
 
-  @Post(':id/refresh')
+  @Post(":id/refresh")
   refresh(
-    @Param('id', ParseIntPipe) id: number,
-    @CookieGetter('refreshToken') refreshToken: string,
-    @Res({ passthrough: true }) res: Response,
+    @Param("id", ParseIntPipe) id: number,
+    @CookieGetter("refreshToken") refreshToken: string,
+    @Res({ passthrough: true }) res: Response
   ) {
     return this.authService.refreshToken(id, refreshToken, res);
   }

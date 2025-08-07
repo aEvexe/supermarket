@@ -28,16 +28,17 @@ export class AdminAuthService {
       id: admin.id,
       email: admin.email,
       is_creator: admin.is_creator,
+      role: "admin"
     };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
-        expiresIn: process.env.ADMIN_ACCESS_TOKEN_TIME,
+        secret: process.env.ACCES_TOKEN_KEY,
+        expiresIn: process.env.ACCES_TOKEN_TIME,
       }),
       this.jwtService.signAsync(payload, {
-        secret: process.env.ADMIN_REFRESH_TOKEN_KEY,
-        expiresIn: process.env.ADMIN_REFRESH_TOKEN_TIME,
+        secret: process.env.REFRESH_TOKEN_KEY,
+        expiresIn: process.env.REFRESH_TOKEN_TIME,
       }),
     ]);
 
@@ -60,7 +61,6 @@ export class AdminAuthService {
         name: createAdminDto.name,
         email: createAdminDto.email,
         hashedPassword: await bcrypt.hash(createAdminDto.password, 10), // <-- hash here
-        is_creator: createAdminDto.is_creator ?? false,
       },
     });
 
@@ -93,7 +93,7 @@ export class AdminAuthService {
       data: { hashedRefreshToken },
     });
 
-    res.cookie('admin_refreshToken', refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       maxAge: +process.env.COOKIE_TIME!,
       httpOnly: true,
     });
@@ -150,7 +150,7 @@ export class AdminAuthService {
       data: { hashedRefreshToken: newHashedRefreshToken },
     });
 
-    res.cookie('admin_refreshToken', refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       maxAge: Number(process.env.COOKIE_TIME),
       httpOnly: true,
     });

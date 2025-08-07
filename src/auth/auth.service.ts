@@ -30,6 +30,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       is_active: user.is_active,
+      role: "customer"
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -57,7 +58,7 @@ export class AuthService {
       throw new ConflictException('This user already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password!, 10);
     const activationLink = uuidv4();
 
     const newUser = await this.prismaService.customer.create({
@@ -114,7 +115,7 @@ export class AuthService {
   }
 
   async signout(userId: number, res: Response) {
-    const customer = await this.prismaService.admin.updateMany({
+    const customer = await this.prismaService.customer.updateMany({
       where: {
         id: Number(userId), // convert to number
         hashedRefreshToken: { not: null },
