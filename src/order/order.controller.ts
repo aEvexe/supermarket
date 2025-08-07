@@ -8,6 +8,8 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { CreateOrderDto } from "./dto/create-order.dto";
@@ -62,5 +64,20 @@ export class OrderController {
   @ApiResponse({ status: 200, description: "Order deleted." })
   remove(@Param("id") id: string) {
     return this.orderService.remove(+id);
+  }
+
+  @Get("date-range")
+  getByDateRange(
+    @Query("start") startDate: string,
+    @Query("end") endDate: string
+  ) {
+    return this.orderService.findByDateRange(startDate, endDate);
+  }
+
+  @Get("by-delivery-company/:deliveryCompanyId")
+  getOrdersByDeliveryCompany(
+    @Param("deliveryCompanyId", ParseIntPipe) id: number
+  ) {
+    return this.orderService.getOrdersByDeliveryCompany(id);
   }
 }
